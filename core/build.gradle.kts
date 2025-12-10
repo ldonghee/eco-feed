@@ -1,7 +1,13 @@
+plugins {
+  id("org.springframework.boot")
+  kotlin("jvm")
+  kotlin("plugin.spring")
+}
+
 dependencies {
   // Validation
   api("jakarta.validation:jakarta.validation-api")
 
-  // Time handling
-  implementation("org.threeten:threetenbp:1.6.9")
+  // Web Scraping
+  implementation("org.jsoup:jsoup:1.18.1")
 }
