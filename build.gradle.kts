@@ -21,6 +21,23 @@ allprojects {
 
 subprojects {
   apply(plugin = "org.jetbrains.kotlin.jvm")
+  apply(plugin = "org.jetbrains.kotlin.plugin.spring")
+  apply(plugin = "io.spring.dependency-management")
+
+
+  dependencies {
+    // Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-reflect")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.9.0")
+
+    // Jackson for Kotlin
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+
+    // Logging
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
+  }
 
   java {
     toolchain {

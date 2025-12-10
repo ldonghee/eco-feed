@@ -1,7 +1,5 @@
 plugins {
   id("org.springframework.boot")
-  id("io.spring.dependency-management")
-  kotlin("plugin.spring")
 }
 
 dependencies {
@@ -9,25 +7,37 @@ dependencies {
   implementation(project(":core"))
   implementation(project(":infra"))
 
-  // Kotlin
-  implementation(kotlin("stdlib"))
-  implementation(kotlin("reflect"))
-
-  // Jackson
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-
-  // Logging
-  implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
-
   // Spring Boot
-  implementation("org.springframework.boot:spring-boot-starter")
+  implementation("org.springframework.boot:spring-boot-starter-webflux")
+  implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-  // Jsoup (HTML 파싱)
-  implementation("org.jsoup:jsoup:1.17.2")
+  // Scheduler
+  implementation("org.springframework.boot:spring-boot-starter-quartz")
 
-  // OkHttp (HTTP 클라이언트)
-  implementation("com.squareup.okhttp3:okhttp:4.12.0")
+  // Web Scraping
+  implementation("org.jsoup:jsoup:1.18.1")
 
-  // Redis
-  implementation("org.springframework.boot:spring-boot-starter-data-redis")
+  // HTTP Client
+  implementation("io.projectreactor.netty:reactor-netty")
+
+  // Message Queue (Redis Streams or RabbitMQ)
+  implementation("org.springframework.boot:spring-boot-starter-amqp")
+  // or
+  // Redis Streams 는 이미 infra 에 포함
+
+  // Test
+  testImplementation("org.springframework.boot:spring-boot-starter-test")
+  testImplementation("io.projectreactor:reactor-test")
+  testImplementation("io.kotest:kotest-runner-junit5:5.9.1")
+  testImplementation("io.kotest:kotest-assertions-core:5.9.1")
+  testImplementation("io.mockk:mockk:1.13.12")
+}
+
+tasks.bootJar {
+  enabled = true
+  archiveFileName.set("eco-feed-batch.jar")
+}
+
+tasks.jar {
+  enabled = false
 }

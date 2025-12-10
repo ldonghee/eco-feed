@@ -1,45 +1,28 @@
 plugins {
   id("org.springframework.boot") apply false
-  id("io.spring.dependency-management")
-
-  kotlin("plugin.spring")
-  kotlin("plugin.jpa")
 }
 
 dependencies {
-  // 모듈 의존성
   api(project(":core"))
 
-  // Kotlin
-  implementation(kotlin("stdlib"))
-  implementation(kotlin("reflect"))
+  // Spring Data R2DBC
+  api("org.springframework.boot:spring-boot-starter-data-r2dbc")
 
-  // Jackson
-  implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-  implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+  // R2DBC Drivers
+  runtimeOnly("org.postgresql:r2dbc-postgresql")
+  runtimeOnly("io.asyncer:r2dbc-mysql:1.2.0")
 
-  // Spring Data JPA
-  implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+  // Connection Pool
+  implementation("io.r2dbc:r2dbc-pool")
 
-  // Spring Data Redis
-  implementation("org.springframework.boot:spring-boot-starter-data-redis")
+  // Redis Reactive
+  api("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
-  // MySQL
-  runtimeOnly("com.mysql:mysql-connector-j")
-
-  // Flyway
+  // Flyway for DB Migration (blocking, 초기 마이그레이션용)
   implementation("org.flywaydb:flyway-core")
   implementation("org.flywaydb:flyway-mysql")
-}
+  runtimeOnly("com.mysql:mysql-connector-j")
 
-allOpen {
-  annotation("jakarta.persistence.Entity")
-  annotation("jakarta.persistence.MappedSuperclass")
-  annotation("jakarta.persistence.Embeddable")
-}
-
-dependencyManagement {
-  imports {
-    mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-  }
+  // Test
+  testImplementation("io.projectreactor:reactor-test")
 }
