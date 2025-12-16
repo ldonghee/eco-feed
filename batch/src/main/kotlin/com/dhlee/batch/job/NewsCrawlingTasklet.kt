@@ -14,7 +14,7 @@ import java.time.LocalDateTime
 class NewsCrawlingTasklet(
   private val crawler: YonhapNewsCrawler
 ) : Tasklet {
-  private val logger = KotlinLogging.logger {}
+  private val log = KotlinLogging.logger {}
 
   override fun execute(
     contribution: StepContribution,
@@ -22,11 +22,11 @@ class NewsCrawlingTasklet(
   ): RepeatStatus = runBlocking {
 
     val startTime = LocalDateTime.now()
-    logger.info { "🚀 뉴스 크롤링 Tasklet 시작" }
+    log.info { "🚀 뉴스 크롤링 Tasklet 시작" }
 
     try {
       // 크롤링 실행
-      val articles = crawler.crawlEconomyNews()
+      val articles = crawler.getEconomyNews()
 
       val endTime = LocalDateTime.now()
       val duration = Duration.between(startTime, endTime)
@@ -39,7 +39,7 @@ class NewsCrawlingTasklet(
       ctx.put("durationSeconds", duration.seconds)
 
       // 최종 로그
-      logger.info {
+      log.info {
         """
                 
                 ╔════════════════════════════════════════════════════════╗
@@ -56,7 +56,7 @@ class NewsCrawlingTasklet(
 
       RepeatStatus.FINISHED
     } catch (e: Exception) {
-      logger.error(e) { "크롤링 Tasklet 실행 실패" }
+      log.error(e) { "크롤링 Tasklet 실행 실패" }
       throw e
     }
   }

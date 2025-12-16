@@ -26,8 +26,8 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-webflux")
 
   // R2DBC
-  implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
-  implementation("io.asyncer:r2dbc-mysql:1.0.5")
+//  implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+//  implementation("io.asyncer:r2dbc-mysql:1.0.5")
 
   // Redis Reactive
   implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")

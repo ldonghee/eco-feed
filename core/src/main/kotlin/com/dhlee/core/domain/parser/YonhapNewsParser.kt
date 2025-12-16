@@ -4,9 +4,11 @@ import com.dhlee.core.domain.article.NewsArticle
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+@Component
 class YonhapNewsParser {
   private val logger = KotlinLogging.logger {}
   private val dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")

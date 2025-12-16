@@ -16,7 +16,7 @@ class YonhapNewsCrawler(
   private val webClient: WebClient,
   private val parser: YonhapNewsParser
 ) {
-  private val logger = KotlinLogging.logger {}
+  private val log = KotlinLogging.logger {}
 
   companion object {
     private const val BASE_URL = "https://www.yna.co.kr"
@@ -29,16 +29,16 @@ class YonhapNewsCrawler(
   /**
    * 연합뉴스 경제 섹션 크롤링
    */
-  suspend fun crawlEconomyNews(): List<NewsArticle> = coroutineScope {
-    logger.info { "=== 연합뉴스 경제 크롤링 시작 ===" }
+  suspend fun getEconomyNews(): List<NewsArticle> = coroutineScope {
+    log.info { "=== 연합뉴스 경제 크롤링 시작 ===" }
 
     try {
       // 1단계: 기사 URL 수집
       val articleUrls = collectArticleUrls()
-      logger.info { "📋 수집된 기사 URL: ${articleUrls.size}개" }
+      log.info { "📋 수집된 기사 URL: ${articleUrls.size}개" }
 
       if (articleUrls.isEmpty()) {
-        logger.warn { "수집된 URL이 없습니다" }
+        log.warn { "수집된 URL이 없습니다" }
         return@coroutineScope emptyList()
       }
 
@@ -52,14 +52,14 @@ class YonhapNewsCrawler(
         .filterNotNull()
         .toList()
 
-      logger.info { "✅ 크롤링 완료: ${articles.size}개 기사" }
+      log.info { "✅ 크롤링 완료: ${articles.size}개 기사" }
 
       // 3단계: 결과 로깅
       logCrawlingResults(articles)
 
       articles
     } catch (e: Exception) {
-      logger.error(e) { "크롤링 중 오류 발생" }
+      log.error(e) { "크롤링 중 오류 발생" }
       emptyList()
     }
   }
@@ -74,7 +74,7 @@ class YonhapNewsCrawler(
       try {
         val pageUrl = if (page == 0) ECONOMY_URL else "$ECONOMY_URL/$page"
 
-        logger.info { "📄 목록 페이지 ${page + 1} 크롤링: $pageUrl" }
+        log.info { "📄 목록 페이지 ${page + 1} 크롤링: $pageUrl" }
 
         val html = webClient.get()
           .uri(pageUrl)
@@ -84,12 +84,12 @@ class YonhapNewsCrawler(
         if (html != null) {
           val pageUrls = parser.parseArticleLinks(html)
           urls.addAll(pageUrls)
-          logger.info { "   ➜ 발견된 링크: ${pageUrls.size}개" }
+          log.info { "   ➜ 발견된 링크: ${pageUrls.size}개" }
         }
 
         delay(REQUEST_DELAY_MS)
       } catch (e: Exception) {
-        logger.error(e) { "페이지 ${page + 1} 수집 실패" }
+        log.error(e) { "페이지 ${page + 1} 수집 실패" }
       }
     }
 
@@ -101,7 +101,7 @@ class YonhapNewsCrawler(
    */
   private suspend fun crawlArticleDetail(url: String): NewsArticle? {
     return try {
-      logger.debug { "📰 기사 크롤링: $url" }
+      log.debug { "📰 기사 크롤링: $url" }
 
       val html = webClient.get()
         .uri(url)
@@ -109,10 +109,10 @@ class YonhapNewsCrawler(
         .awaitBody<String>()
 
       parser.parseArticleDetail(url, html)?.also {
-        logger.debug { "   ✅ 파싱 완료: ${it.title}" }
+        log.debug { "   ✅ 파싱 완료: ${it.title}" }
       }
     } catch (e: Exception) {
-      logger.error(e) { "기사 크롤링 실패: $url" }
+      log.error(e) { "기사 크롤링 실패: $url" }
       null
     }
   }
@@ -121,14 +121,14 @@ class YonhapNewsCrawler(
    * 크롤링 결과 로깅
    */
   private fun logCrawlingResults(articles: List<NewsArticle>) {
-    logger.info { "\n" + "=".repeat(80) }
-    logger.info { "📊 크롤링 결과 요약" }
-    logger.info { "=".repeat(80) }
-    logger.info { "총 기사 수: ${articles.size}개" }
-    logger.info { "" }
+    log.info { "\n" + "=".repeat(80) }
+    log.info { "📊 크롤링 결과 요약" }
+    log.info { "=".repeat(80) }
+    log.info { "총 기사 수: ${articles.size}개" }
+    log.info { "" }
 
     articles.forEachIndexed { index, article ->
-      logger.info {
+      log.info {
         """
                 [${index + 1}] ${article.title}
                    URL: ${article.url}
@@ -138,9 +138,9 @@ class YonhapNewsCrawler(
                    본문 길이: ${article.content?.length ?: 0} 자
                 """.trimIndent()
       }
-      logger.info { "-".repeat(80) }
+      log.info { "-".repeat(80) }
     }
 
-    logger.info { "=".repeat(80) }
+    log.info { "=".repeat(80) }
   }
 }
